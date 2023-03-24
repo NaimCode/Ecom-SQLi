@@ -32,7 +32,9 @@ function ImageSwitcher({ images, title }: ImageSwitcherProps) {
             alt="show case"
             className={cx(
               "absolute transition-all duration-500",
-              front === index ? "top-5 left-5 z-10" : "-top-5 -left-5 z-[9]"
+              front === index ? "top-5 left-5 z-10" : "-top-5 -left-5 z-[9]",{
+                "blur":front!=index,
+              }
             )}
           />
         ))}
