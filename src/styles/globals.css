@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base{
+    p{
+        @apply text-gray-500  text-[14px] font-normal;
+    }
+    h3{
+        @apply text-2xl;
+    }
+}
