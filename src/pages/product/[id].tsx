@@ -6,6 +6,8 @@ import { useState } from "react";
 import cx from "classnames";
 import ReactMarkdown from "react-markdown";
 import Card from "@/components/card";
+import { useCardStore } from "@/state/card";
+import { toast } from "react-hot-toast";
 export const getStaticPaths = async () => {
   const res = await client.getEntries({
     content_type: "product",
@@ -50,6 +52,15 @@ export const getStaticProps = async (context: any) => {
 function Product({ product }: any) {
   const [size, setSize] = useState(product.size[0]);
   const [quantity, setQuantity] = useState(1);
+  const addItem=useCardStore(state=>state.addItem)
+  const handleAddToCard = () => {
+    addItem({
+      product,
+      quantity,
+      size,
+    });
+    toast.success("Item added to card successfully");
+  }
   return (
     <>
       <div className=" flex flex-row  gap-[100px]  max-w-[1000px] mx-auto items-center">
@@ -124,7 +135,10 @@ function Product({ product }: any) {
               <h2 className="text-green-900 text-3xl font-semibold">
                 $ {product.price * quantity}
               </h2>
-              <button className="bg-green-200 flex-grow py-3 text-lg font-semibold">
+              <button
+              onClick={handleAddToCard}
+              
+              className="bg-green-200 transition-all flex-grow py-3 text-lg font-semibold hover:bg-green-400">
                 Add to cart
               </button>
             </div>
