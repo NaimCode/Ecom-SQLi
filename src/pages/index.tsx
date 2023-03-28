@@ -5,7 +5,7 @@ import Button from "@/components/Button";
 import ImageSwitcher from "@/components/ImageSwitcher";
 import { motion, useMotionValueEvent } from "framer-motion";
 import { useScroll } from "framer-motion"
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import cx from "classnames";
 import ToUp from "@/components/ToUp";
 import { NextPage } from "next";
@@ -13,6 +13,8 @@ import { useGetHomePageData } from "@/hooks";
 import { useRouter } from "next/router";
 import { getImagesUrl } from "@/utils";
 import { client } from "@/utils/contentful";
+import Card from "@/components/card";
+
 
 
 export async function getStaticProps() {
