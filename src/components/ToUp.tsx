@@ -8,7 +8,6 @@ function ToUp() {
   const [visible,setVisible] = useState(false);
  
   useMotionValueEvent(scrollY, "change", (latest) => {
-    //opacityHero equal to 100 if latest is more that 600
     if(latest>800)setVisible(true)
     else setVisible(false)
   })

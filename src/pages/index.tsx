@@ -8,17 +8,48 @@ import { useScroll } from "framer-motion"
 import { useEffect, useState } from "react";
 import cx from "classnames";
 import ToUp from "@/components/ToUp";
-export default function Home() {
-  const mainProductId = 1;
+import { NextPage } from "next";
+import { useGetHomePageData } from "@/hooks";
+import { useRouter } from "next/router";
+import { getImagesUrl } from "@/utils";
+import { client } from "@/utils/contentful";
 
+
+export async function getStaticProps() {
+  const res = await client.getEntries({
+    content_type: 'product',
+    order: 'sys.createdAt'
+  })
+
+const products = res.items.map((entry: any) => {
+  return {
+    id: entry.sys.id,
+    ...entry.fields,
+
+  }
+})
+  return {
+    props: {
+      products
+    },
+  }
+}
+
+ const Home:NextPage=(prop:any )=> {
+  const {products}=prop
+  const {
+    hero,showCase
+  }=useGetHomePageData(products||[])
+  const mainProductId = 1;
+   
   const { scrollY} = useScroll()
   const [opacityHero, setopacityHero] = useState(0);
  
   useMotionValueEvent(scrollY, "change", (latest) => {
-    //opacityHero equal to 100 if latest is more that 600
     const v=latest/800
     setopacityHero(v)
   })
+  const router=useRouter()
   return (
     <>
    
@@ -30,23 +61,30 @@ export default function Home() {
       </Head>
       <main className="space-y-[120px] relative">
   
-        <section className="bg-[url('/assets/hero.jpg')] bg-no-repeat w-full h-[90vh] bg-cover  bg-fixed">
+        <section 
+        style={{backgroundImage:`url(${hero.image})`,
+        backgroundPosition:"center",}}
+        className={cx("bg-no-repeat w-full h-[90vh] bg-cover  bg-fixed"
+        )}>
           <motion.div
-          style={{backgroundColor:`rgba(255,255,255,${opacityHero})`}}
-          className={cx("h-full w-full flex flex-col items-center justify-center gap-10 ")}>
-          <h1 className="text-white text-5xl font-bold">
-            New Work Canvas - $310
+          style={{backgroundColor:`rgba(255,255,255,${opacityHero})`,backdropFilter:`blur(${opacityHero*10}px)`}}
+          className={cx("h-full w-full  flex flex-col items-center justify-center")}>
+        <div className="sticky top-0 py-10  flex flex-col items-center justify-center gap-10">
+        <h1 className="text-white text-5xl font-bold drop-shadow-xl">
+           {hero.title}
           </h1>
-          <Button>
-            <a href={`/product/${mainProductId}`}>Shop this item</a>
+          <Button onClick={()=>{
+            router.push(hero.link)
+          }}>Shop this item
           </Button>
+        </div>
           </motion.div>
         </section>
         <motion.section  className="max-w-[1200px] mx-auto px-4 grid grid-cols-2 gap-[200px] items-stretch ">
           <ImageSwitcher
 
-            title={"Grey & White"}
-            images={["/assets/showCase1_1.jpg", "/assets/showCase1_2.jpg"]}
+            title={showCase[1].title}
+            images={getImagesUrl(showCase[1].images)}
           />
           <div className="justify-center gap-8 max-w-[360px] flex flex-col h-[700px]">
             <motion.h3
@@ -55,7 +93,7 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="text-2xl"
             >
-              Grey & White
+              {showCase[1].title}
             </motion.h3>
             <motion.p
               initial={{ opacity: 0, x: 20 }}
@@ -73,10 +111,12 @@ export default function Home() {
                 delay: 0.1,
               }}
               type="secondary"
+              onClick={() => {
+                router.push("/product/"+showCase[1].id)
+              }}
             >
-              <a href={`/product/${mainProductId}`} className="inline-block">
                 Shop this item
-              </a>
+              
             </Button>
           </div>
         </motion.section>
@@ -96,15 +136,18 @@ export default function Home() {
               Maecenas mattis libero ut nibh finibus varius. Sed sit amet
               scelerisque urna, et viverra orci.
             </p>
-            <Button type="secondary">
-              <a href={`/product/${mainProductId}`} className="inline-block">
+            <Button onClick={
+              ()=>{
+                router.push("/product/"+showCase[2].id)
+              }
+            } type="secondary">
                 Shop this item
-              </a>
+            
             </Button>
           </motion.div>
           <ImageSwitcher
             title={"Two colored"}
-            images={["/assets/showCase2_1.jpg", "/assets/showCase2_2.jpg"]}
+            images={getImagesUrl(showCase[2].images)}
           />
         </section>
         <section className="container mx-auto grid grid-cols-2 gap-[30px] px-20">
@@ -121,30 +164,37 @@ export default function Home() {
         </section>
         <section className="max-w-[1200px] mx-auto px-4 grid grid-cols-2 gap-[200px] items-stretch ">
           <ImageSwitcher
-            title={"Plain & Simple"}
-            images={["/assets/showCase4_1.jpg", "/assets/showCase4_2.jpg"]}
+            title={showCase[3].title}
+            images={getImagesUrl(showCase[3].images)}
           />
           <div className="justify-center gap-8 max-w-[360px] flex flex-col h-[700px]">
-            <h3 className="text-2xl">Plain & Simple</h3>
+            <h3 className="text-2xl">{
+              showCase[3].title
+            }</h3>
             <p>
               Sed dictum consequat volutpat. Suspendisse et rutrum elit.
               Pellentesque ante velit, scelerisque eget viverra hendrerit,
               vestibulum a mauris. Mauris eu massa lacus. Nunc pulvinar feugiat
               dolor at porttitor.
             </p>
-            <Button type="secondary">
-              <a href={`/product/${mainProductId}`} className="inline-block">
+            <Button type="secondary"
+            onClick={()=>{
+              router.push("/product/"+showCase[3].id)
+            }}
+            
+            >
                 Shop this item
-              </a>
+             
             </Button>
           </div>
         </section>
         <section className="flex flex-col items-center justify-center text-center gap-4">
           <h1 className="text-secondary text-3xl font-semibold">
-            New Work Canvas - $310
+            {hero.title}
           </h1>
-          <Button type="secondary">
-            <a href={`/product/${mainProductId}`}>Shop this item</a>
+          <Button onClick={()=>{
+            router.push(hero.link)
+          }} type="secondary">Shop this item
           </Button>
         </section>
         <section className="h-[200px] bg-secondary"></section>
@@ -153,3 +203,5 @@ export default function Home() {
     </>
   );
 }
+
+export default Home;

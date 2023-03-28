@@ -10,11 +10,13 @@ type ButtonAnimationProps = {
 function Button({
   children,
   type,
+  onClick,
   animation,
 }: {
   children: React.ReactNode;
   type?: "primary" | "secondary";
   animation?: ButtonAnimationProps;
+  onClick?: () => void;
 }) {
   return (
     <motion.button
@@ -28,6 +30,7 @@ function Button({
         duration: animation?.duration || 0.5,
         delay: animation?.delay || 0,
       }}
+      onClick={onClick}
       className={cx(
         "border-transparent border-2 hover:scale-105  hover:bg-opacity-0 py-4 px-16  font-semibold text-xs",
         type === "secondary"
