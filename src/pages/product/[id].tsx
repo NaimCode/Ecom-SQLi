@@ -48,7 +48,7 @@ export const getStaticProps = async (context: any) => {
     props: { product: product[0] },
   };
 };
-
+//
 function Product({ product }: any) {
   const [size, setSize] = useState(product.size[0]);
   const [quantity, setQuantity] = useState(1);
